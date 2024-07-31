@@ -26,6 +26,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,7 +42,9 @@ import com.example.studytime.R
 import com.example.studytime.domain.model.Session
 import com.example.studytime.domain.model.Subject
 import com.example.studytime.domain.model.Task
+import com.example.studytime.presentation.components.AddSubjectDialog
 import com.example.studytime.presentation.components.CountCard
+import com.example.studytime.presentation.components.DeleteDialog
 import com.example.studytime.presentation.components.SubjectCard
 import com.example.studytime.presentation.components.studySessionList
 import com.example.studytime.presentation.components.tasksList
@@ -149,6 +156,37 @@ fun DashboardScreen(){
 
     )
 
+    var isAddSubjectDialogOpen by rememberSaveable { mutableStateOf(false) } // save state when rotate screen or change to dark/light mode
+    var isDeleteSessionDialogOpen by rememberSaveable { mutableStateOf(false) } // save state when rotate screen or change to dark/light mode
+    var subjectName by remember { mutableStateOf("")}
+    var goalHours by remember{ mutableStateOf("")}
+    var selectedColor by remember { mutableStateOf(Subject.subjectCardColors.random())}
+
+    // add subject
+    AddSubjectDialog(
+        isOpen = isAddSubjectDialogOpen,
+        subjectName = subjectName,
+        goalHours = goalHours,
+        onSubjectNameChange = {subjectName = it },
+        onGoalHoursChange = {goalHours = it},
+        selectedColors = selectedColor,
+        onColorChange = {selectedColor = it},
+        onDismissRequest = { isAddSubjectDialogOpen = false },
+        onConfirmButtonClick = {
+            isAddSubjectDialogOpen = false
+        }
+    )
+
+    // delete subject
+    DeleteDialog(
+        isOpen = isDeleteSessionDialogOpen,
+        title = "Delete Session?",
+        bodyText = "Are you sure you want to delete this session? Your studied hours will be reduced " +
+                "by this session time. This action can not be undone.",
+        onDismissRequest = { isDeleteSessionDialogOpen = false},
+        onConfirmButtonClick = { isDeleteSessionDialogOpen = false}
+    )
+
 
     // place elements like top Head bar, bottom head bar, floating action button at the right place
     Scaffold (
@@ -176,7 +214,10 @@ fun DashboardScreen(){
             item{
                 SubjectCardSection(
                     modifier = Modifier.fillMaxWidth(),
-                    subjectList = subjects
+                    subjectList = subjects,
+                    onAddIconClicked = {
+                        isAddSubjectDialogOpen = true
+                    }
                 )
 
             }
@@ -205,7 +246,7 @@ fun DashboardScreen(){
                 sectionTitle = "RECENT STUDY SESSIONS",
                 emptyListText = "No recent study sessions.\n",
                 sessions = sessions,
-                onDeleteIconClick = {}
+                onDeleteIconClick = {isDeleteSessionDialogOpen = true}
 
             )
 
@@ -266,7 +307,8 @@ private fun CountCardSection(
 private fun SubjectCardSection(
     modifier: Modifier,
     subjectList: List<Subject>,
-    emptyListText: String = "No subjects available. \n Click '+' to add new subject."
+    emptyListText: String = "No subjects available. \n Click '+' to add new subject.",
+    onAddIconClicked: () -> Unit
 ) {
     Column(modifier = modifier) {
         Row(
@@ -280,7 +322,7 @@ private fun SubjectCardSection(
                 modifier = Modifier.padding(start = 12.dp)
             )
 
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = onAddIconClicked) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Subject"
