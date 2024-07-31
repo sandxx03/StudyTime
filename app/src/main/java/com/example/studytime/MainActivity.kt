@@ -8,6 +8,7 @@ import com.example.studytime.domain.model.Subject
 import com.example.studytime.domain.model.Task
 import com.example.studytime.presentation.dashboard.DashboardScreen
 import com.example.studytime.presentation.subject.SubjectScreen
+import com.example.studytime.presentation.task.TaskScreen
 import com.example.studytime.presentation.theme.StudyTimeTheme
 
 class MainActivity : ComponentActivity() {
@@ -16,7 +17,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             StudyTimeTheme {
-               SubjectScreen()
+                TaskScreen()
 
 
             }
