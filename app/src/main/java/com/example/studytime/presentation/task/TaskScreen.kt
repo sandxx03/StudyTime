@@ -12,11 +12,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,25 +29,46 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.room.Delete
+import com.example.studytime.presentation.components.DeleteDialog
+import com.example.studytime.presentation.components.SubjectListBottomSheet
 import com.example.studytime.presentation.components.TaskCheckBox
+import com.example.studytime.presentation.components.TaskDatePicker
 import com.example.studytime.presentation.theme.Red
+import com.example.studytime.subjects
 import com.example.studytime.util.Priority
+import com.example.studytime.util.changeMillisToDateString
+import kotlinx.coroutines.launch
+import java.time.Instant
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskScreen(){
 
     var title by remember{ mutableStateOf("")}
     var description by remember { mutableStateOf("")}
+    var isDeleteDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var isDatePickerDialogOpen by rememberSaveable { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = Instant.now().toEpochMilli()
+    )
+
+    val scope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState()
+    var isBottomSheetOpen by remember{ mutableStateOf(false)}
 
     var taskTitleError by rememberSaveable{ mutableStateOf<String?>(null)}
     taskTitleError = when{
@@ -53,6 +78,40 @@ fun TaskScreen(){
         else -> null
     }
 
+    //Delete dialog for task
+    DeleteDialog(
+        isOpen = isDeleteDialogOpen,
+        title = "Delete Task?" ,
+        bodyText = "Are you sure, you want to delete this task?" +
+        "This action can not be undone.",
+        onDismissRequest = { isDeleteDialogOpen = false},
+        onConfirmButtonClick = { isDeleteDialogOpen = false}
+    )
+
+    //Date Picker for task
+    TaskDatePicker(
+        state = datePickerState,
+        isOpen = isDatePickerDialogOpen,
+        onDismissRequest = { isDatePickerDialogOpen = false},
+        onConfirmButtonClicked = {
+            isDatePickerDialogOpen = false
+        }
+    )
+    
+    //Bottom sheet for task dropdown
+    SubjectListBottomSheet(
+        sheetState = sheetState,
+        isOpen = isBottomSheetOpen ,
+        subjects = subjects,
+        onDismissRequest = {isBottomSheetOpen = false},
+        onSubjectClicked ={
+            // when user select an item in the dropdown bottom sheet, it will close the bottom sheet
+            scope.launch {sheetState.hide()}.invokeOnCompletion{
+                if(!sheetState.isVisible) isBottomSheetOpen = false
+            }
+        }
+    )
+
     Scaffold(
         topBar = {
             TaskScreenTopBar(
@@ -60,13 +119,15 @@ fun TaskScreen(){
                 isComplete = false,
                 checkBoxBorderColor = Red,
                 onBackButtonClick = { },
-                onDeleteButtonClick = { },
+                onDeleteButtonClick = { isDeleteDialogOpen = true},
                 onCheckBoxClick = {}
             )
         }
     ){ paddingValue ->
+        // Task and description input text fields
         Column(
             modifier = Modifier
+                .verticalScroll(state = rememberScrollState())
                 .fillMaxSize()
                 .padding(paddingValue)
                 .padding(horizontal = 12.dp)
@@ -91,6 +152,7 @@ fun TaskScreen(){
             )
             Spacer(modifier = Modifier.height(10.dp))
 
+            // Due Date
             Text(
                 text = "Due Date",
                 style = MaterialTheme.typography.bodySmall
@@ -101,10 +163,10 @@ fun TaskScreen(){
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Text(
-                    text = "English",
+                    text = datePickerState.selectedDateMillis.changeMillisToDateString(),
                     style = MaterialTheme.typography.bodyLarge
                 )
-                IconButton(onClick = {}){
+                IconButton(onClick = { isDatePickerDialogOpen = true}){
                     Icon(
                         imageVector = Icons.Default.DateRange,
                         contentDescription = "Select Due Date"
@@ -113,6 +175,7 @@ fun TaskScreen(){
             }
             Spacer(modifier = Modifier.height(10.dp))
 
+            // Priority buttons
             Text(
                 text = "Priority",
                 style = MaterialTheme.typography.bodySmall
@@ -136,6 +199,43 @@ fun TaskScreen(){
 
                 }
             }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Related to subject
+            Text(
+                text = "Related to subject",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(
+                    text = "English",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                IconButton(onClick = {isBottomSheetOpen = true}){
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Select Subject"
+                    )
+                }
+            }
+
+            // Save Button
+            Button(
+                enabled = taskTitleError == null,
+                onClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp)
+            ){
+                Text(text = "Save")
+            }
+
+
+
 
         }
 
