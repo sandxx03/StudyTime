@@ -6,11 +6,10 @@ import androidx.activity.compose.setContent
 import com.example.studytime.domain.model.Session
 import com.example.studytime.domain.model.Subject
 import com.example.studytime.domain.model.Task
-import com.example.studytime.presentation.dashboard.DashboardScreen
-import com.example.studytime.presentation.session.SessionScreen
-import com.example.studytime.presentation.subject.SubjectScreen
-import com.example.studytime.presentation.task.TaskScreen
+import com.example.studytime.presentation.NavGraph
+import com.example.studytime.presentation.NavGraphs
 import com.example.studytime.presentation.theme.StudyTimeTheme
+import com.ramcosta.composedestinations.DestinationsNavHost
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,7 +17,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             StudyTimeTheme {
-                SessionScreen()
+               DestinationsNavHost(navGraph = NavGraphs.root)
+
 
 
             }

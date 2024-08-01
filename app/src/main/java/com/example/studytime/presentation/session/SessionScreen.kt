@@ -39,12 +39,29 @@ import com.example.studytime.presentation.components.SubjectListBottomSheet
 import com.example.studytime.presentation.components.studySessionList
 import com.example.studytime.sessions
 import com.example.studytime.subjects
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import java.sql.Time
+
+
+// for navigation
+@Destination
+@Composable
+fun SessionScreenRoute(
+    navigator: DestinationsNavigator
+){
+    SessionScreen(
+        onBackButtonClick = { navigator.navigateUp() }
+    )
+
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SessionScreen(){
+private fun SessionScreen(
+    onBackButtonClick: () -> Unit
+){
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
@@ -78,7 +95,7 @@ fun SessionScreen(){
 
     Scaffold(
         topBar = {
-            SessionScreenTopBar (onBackButtonClick = {})
+            SessionScreenTopBar (onBackButtonClick = onBackButtonClick)
         }
     ) { paddingValues ->
         LazyColumn (
@@ -132,7 +149,7 @@ private fun SessionScreenTopBar(
 ) {
     TopAppBar(
         navigationIcon = {
-            IconButton(onClick = {onBackButtonClick }) {
+            IconButton(onClick = onBackButtonClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Navigate to Back Screen"

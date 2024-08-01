@@ -48,12 +48,47 @@ import com.example.studytime.presentation.components.DeleteDialog
 import com.example.studytime.presentation.components.SubjectCard
 import com.example.studytime.presentation.components.studySessionList
 import com.example.studytime.presentation.components.tasksList
+import com.example.studytime.presentation.destinations.SessionScreenRouteDestination
+import com.example.studytime.presentation.destinations.SubjectScreenRouteDestination
+import com.example.studytime.presentation.destinations.TaskScreenRouteDestination
+import com.example.studytime.presentation.subject.SubjectScreenNavArgs
+import com.example.studytime.presentation.task.TaskScreenNavArgs
 import com.example.studytime.sessions
 import com.example.studytime.subjects
 import com.example.studytime.tasks
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+// for navigation
+@Destination(start = true)
 @Composable
-fun DashboardScreen(){
+fun DashboardScreenRoute(
+    navigator: DestinationsNavigator
+){
+    DashboardScreen(
+        onSubjectCardClick = { subjectId ->
+            subjectId?.let{
+                val navArg = SubjectScreenNavArgs(subjectId = subjectId)
+                navigator.navigate(SubjectScreenRouteDestination(navArgs = navArg))
+            }
+
+        },
+        onTaskCardClick = { taskId ->
+            val navArg = TaskScreenNavArgs(taskId = taskId, subjectId = null)
+            navigator.navigate(TaskScreenRouteDestination(navArgs = navArg))
+        },
+        onStartSessionButtonClick = {
+            navigator.navigate(SessionScreenRouteDestination())
+        }
+    )
+
+}
+@Composable
+private fun DashboardScreen(
+    onSubjectCardClick: (Int?) -> Unit,
+    onTaskCardClick: (Int?) -> Unit,
+    onStartSessionButtonClick: () -> Unit
+){
 
     var isAddSubjectDialogOpen by rememberSaveable { mutableStateOf(false) } // save state when rotate screen or change to dark/light mode
     var isDeleteSessionDialogOpen by rememberSaveable { mutableStateOf(false) } // save state when rotate screen or change to dark/light mode
@@ -114,15 +149,14 @@ fun DashboardScreen(){
                 SubjectCardSection(
                     modifier = Modifier.fillMaxWidth(),
                     subjectList = subjects,
-                    onAddIconClicked = {
-                        isAddSubjectDialogOpen = true
-                    }
+                    onAddIconClicked = { isAddSubjectDialogOpen = true },
+                    onSubjectCardClick = onSubjectCardClick
                 )
 
             }
             item{
                 Button(
-                    onClick = {},
+                    onClick = onStartSessionButtonClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 48.dp, vertical = 20.dp)
@@ -135,7 +169,7 @@ fun DashboardScreen(){
                 emptyListText = "No upcoming tasks.\n" + "Click '+' to add new task.",
                 tasks = tasks,
                 onCheckBoxClick = {},
-                onTaskCardClick = {}
+                onTaskCardClick = onTaskCardClick
             )
             item{
                 Spacer(modifier = Modifier.height(20.dp))
@@ -207,7 +241,8 @@ private fun SubjectCardSection(
     modifier: Modifier,
     subjectList: List<Subject>,
     emptyListText: String = "No subjects available. \n Click '+' to add new subject.",
-    onAddIconClicked: () -> Unit
+    onAddIconClicked: () -> Unit,
+    onSubjectCardClick: (Int?) -> Unit
 ) {
     Column(modifier = modifier) {
         Row(
@@ -259,7 +294,7 @@ private fun SubjectCardSection(
                 SubjectCard(
                     subjectName = subject.name,
                     gradientColors = subject.colors,
-                    onClick = {}
+                    onClick = { onSubjectCardClick(subject.subjectId)}
 
                 )
 

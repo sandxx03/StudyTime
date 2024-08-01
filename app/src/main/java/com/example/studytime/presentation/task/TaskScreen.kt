@@ -42,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.room.Delete
 import com.example.studytime.presentation.components.DeleteDialog
 import com.example.studytime.presentation.components.SubjectListBottomSheet
 import com.example.studytime.presentation.components.TaskCheckBox
@@ -51,12 +50,34 @@ import com.example.studytime.presentation.theme.Red
 import com.example.studytime.subjects
 import com.example.studytime.util.Priority
 import com.example.studytime.util.changeMillisToDateString
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import java.time.Instant
 
+// for navigation
+data class TaskScreenNavArgs(
+    val taskId: Int?,
+    val subjectId: Int?
+)
+
+@Destination(navArgsDelegate = TaskScreenNavArgs::class)
+@Composable
+fun TaskScreenRoute(
+    navigator: DestinationsNavigator
+){
+    TaskScreen(
+        onBackButtonClick = {navigator.navigateUp()}
+    )
+
+}
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskScreen(){
+private fun TaskScreen(
+    onBackButtonClick: () -> Unit
+){
 
     var title by remember{ mutableStateOf("")}
     var description by remember { mutableStateOf("")}
@@ -118,7 +139,7 @@ fun TaskScreen(){
                 isTaskExist = true,
                 isComplete = false,
                 checkBoxBorderColor = Red,
-                onBackButtonClick = { },
+                onBackButtonClick = onBackButtonClick,
                 onDeleteButtonClick = { isDeleteDialogOpen = true},
                 onCheckBoxClick = {}
             )
