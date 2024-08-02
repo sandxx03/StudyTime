@@ -10,7 +10,9 @@ import com.example.studytime.presentation.NavGraph
 import com.example.studytime.presentation.NavGraphs
 import com.example.studytime.presentation.theme.StudyTimeTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
