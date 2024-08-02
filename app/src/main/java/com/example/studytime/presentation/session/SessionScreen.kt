@@ -51,7 +51,7 @@ import kotlinx.coroutines.launch
 fun SessionScreenRoute(
     navigator: DestinationsNavigator
 ){
-    val viewModel: SessionScreenViewModel = hiltViewModel()
+    val viewModel: SessionViewModel = hiltViewModel()
     SessionScreen(
         onBackButtonClick = { navigator.navigateUp() }
     )

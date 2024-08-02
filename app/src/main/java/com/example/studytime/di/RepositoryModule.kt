@@ -2,7 +2,7 @@ package com.example.studytime.di
 
 import com.example.studytime.data.repository.SessionRepositoryImpl
 import com.example.studytime.data.repository.SubjectRepositoryImpl
-import com.example.studytime.domain.model.Task
+import com.example.studytime.data.repository.TaskRepositoryImpl
 import com.example.studytime.domain.repository.SessionRepository
 import com.example.studytime.domain.repository.SubjectRepository
 import com.example.studytime.domain.repository.TaskRepository
@@ -16,6 +16,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
+    @Singleton
+    @Binds
     abstract fun bindSubjectRepository(
         impl: SubjectRepositoryImpl
     ): SubjectRepository
@@ -23,7 +25,7 @@ abstract class RepositoryModule {
     @Singleton
     @Binds
     abstract fun bindTaskRepository(
-        impl: SubjectRepositoryImpl
+        impl: TaskRepositoryImpl
     ): TaskRepository
 
     @Singleton
