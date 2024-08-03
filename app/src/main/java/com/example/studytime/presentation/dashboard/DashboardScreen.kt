@@ -60,12 +60,14 @@ import com.example.studytime.presentation.subject.SubjectScreenNavArgs
 import com.example.studytime.presentation.task.TaskScreenNavArgs
 import com.example.studytime.util.SnackbarEvent
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 
+@RootNavGraph(start = true)
 // for navigation
-@Destination(start = true)
+@Destination()
 @Composable
 fun DashboardScreenRoute(
     navigator: DestinationsNavigator
