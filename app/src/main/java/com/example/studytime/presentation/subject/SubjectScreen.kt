@@ -32,7 +32,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +46,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.studytime.domain.model.Subject
 import com.example.studytime.presentation.components.AddSubjectDialog
 import com.example.studytime.presentation.components.CountCard
 import com.example.studytime.presentation.components.DeleteDialog
@@ -55,8 +53,6 @@ import com.example.studytime.presentation.components.studySessionList
 import com.example.studytime.presentation.components.tasksList
 import com.example.studytime.presentation.destinations.TaskScreenRouteDestination
 import com.example.studytime.presentation.task.TaskScreenNavArgs
-import com.example.studytime.sessions
-import com.example.studytime.tasks
 import com.example.studytime.util.SnackbarEvent
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
