@@ -6,7 +6,7 @@ import com.example.studytime.domain.model.Subject
 import com.example.studytime.domain.model.Task
 
 
-data class SubjectState (
+data class SubjectState(
     val currentSubjectId: Int? = null,
     val subjectName: String = "",
     val goalStudyHours: String ="",

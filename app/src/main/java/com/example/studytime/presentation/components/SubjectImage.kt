@@ -19,80 +19,74 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import coil.size.Scale
+import com.example.studytime.R
 
 @Composable
 fun SubjectImage(
     imageUri: Uri?,
-    onImageUriChange: (Uri?) -> Unit,
+    onImageUriChange: (Uri) -> Unit,
 ) {
-    val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        onImageUriChange(uri)
-    }
+    val context = LocalContext.current
+    // Image picker launcher
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let { onImageUriChange(it) }
+        }
+    )
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
-            .padding(8.dp)
-            .clickable { pickImageLauncher.launch("image/*") },
-        contentAlignment = Alignment.Center
+            .clip(RoundedCornerShape(20.dp))
+            .clickable {
+                launcher.launch("image/*")
+            }
+            .padding(16.dp) // Add padding to create space from the edges
     ) {
         if (imageUri != null) {
-            val painter = rememberAsyncImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageUri)
-                    .crossfade(true)
-                    .build()
-            )
-
+            // Image loaded with a placeholder
             Image(
-                painter = painter,
-                contentDescription = "Subject Banner",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(8.dp)),
+                painter = rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(context)
+                        .data(imageUri)
+                        .scale(Scale.FILL)
+                        .build()
+                ),
+                contentDescription = "Subject Image",
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
         } else {
-            // Placeholder and instructions
+            // Placeholder when no image is selected
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Gray.copy(alpha = 0.3f))
-                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.Gray) // Background color for visibility
+                    .padding(16.dp), // Padding inside the column
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(
+                Image(
+                    painter = painterResource(id = R.drawable.placeholder_image), // Custom placeholder image
+                    contentDescription = "Placeholder Image",
                     modifier = Modifier
-                        .size(80.dp)
-                        .background(Color.Gray.copy(alpha = 0.2f))
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable { pickImageLauncher.launch("image/*") } // Clickable to prompt image picker
-                        .padding(16.dp) // Add padding to ensure the icon is centered
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Add Image",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .align(Alignment.Center),
-                        tint = Color.Gray
-                    )
-                }
-
+                        .size(80.dp), // Fixed size for placeholder
+                    contentScale = ContentScale.Fit
+                )
+                Spacer(modifier = Modifier.height(8.dp)) // Space between image and text
                 Text(
-                    text = "Upload an Image",
+                    text = "Click to add image",
+                    modifier = Modifier,
                     textAlign = TextAlign.Center,
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .clickable { pickImageLauncher.launch("image/*") } // Clickable to prompt image picker
+                    color = Color.White
                 )
             }
         }

@@ -1,6 +1,5 @@
 package com.example.studytime.presentation.subject
 
-import android.view.View
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -60,6 +59,7 @@ class SubjectViewModel @Inject constructor(
 
     private val _snackbarEventFlow = MutableSharedFlow<SnackbarEvent>()
     val snackbarEventFlow = _snackbarEventFlow.asSharedFlow()
+
 
     init {
         fetchSubject()
