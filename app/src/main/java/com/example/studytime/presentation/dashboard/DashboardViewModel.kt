@@ -137,7 +137,8 @@ class DashboardViewModel @Inject constructor(
                     subject = Subject(
                         name = state.value.subjectName,
                         goalHours = state.value.goalStudyHours.toFloatOrNull()?: 1f,
-                        colors = state.value.subjectCardColors.map{it.toArgb()}
+                        colors = state.value.subjectCardColors.map{it.toArgb()},
+                        imagePath = state.value.imagePath
 
                     )
                 )
@@ -146,7 +147,8 @@ class DashboardViewModel @Inject constructor(
                     it.copy(
                         subjectName = "",
                         goalStudyHours = "",
-                        subjectCardColors = Subject.subjectCardColors.random()
+                        subjectCardColors = Subject.subjectCardColors.random(),
+                        imagePath = null
                     )
                 }
 

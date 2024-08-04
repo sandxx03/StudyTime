@@ -15,5 +15,6 @@ data class DashboardState(
     val subjectName: String = "",
     val goalStudyHours: String = "",
     val subjectCardColors: List<Color> = Subject.subjectCardColors.random(),
-    val session: Session? = null
+    val session: Session? = null,
+    val imagePath: String? = null
 )

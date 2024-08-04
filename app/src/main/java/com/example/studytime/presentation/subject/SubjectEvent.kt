@@ -22,4 +22,6 @@ sealed class SubjectEvent {
     data class OnGoalStudyHoursChange(val hours: String): SubjectEvent()
 
     data class OnDeleteSessionButtonClick(val session: Session): SubjectEvent()
+
+    data class OnImageUriChange(val uri: String?) : SubjectEvent()
 }

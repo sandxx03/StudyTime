@@ -10,7 +10,7 @@ import com.example.studytime.domain.model.Task
 
 @Database(
     entities = [Subject::class, Session::class, Task::class],
-    version = 1
+    version = 2
 )
 
 @TypeConverters(ColorListConverter::class)

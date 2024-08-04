@@ -12,11 +12,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
-import com.example.studytime.domain.model.Session
-import com.example.studytime.domain.model.Subject
-import com.example.studytime.domain.model.Task
 import com.example.studytime.presentation.NavGraphs
 import com.example.studytime.presentation.destinations.SessionScreenRouteDestination
 import com.example.studytime.presentation.session.StudySessionTimerService

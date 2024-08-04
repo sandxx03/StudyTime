@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Database
 import androidx.room.Room
 import com.example.studytime.data.local.AppDatabase
+import com.example.studytime.data.local.MIGRATION_1_2
 import com.example.studytime.data.local.SessionDao
 import com.example.studytime.data.local.SubjectDao
 import com.example.studytime.data.local.TaskDao
@@ -28,6 +29,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "studytime.db"
         )
+            .addMigrations(MIGRATION_1_2)
             .build()
     }
 
